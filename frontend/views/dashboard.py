@@ -2,7 +2,7 @@
 
 import streamlit as st
 from frontend.api_client import api
-from frontend.pages.inspection import render as render_inspection
+from frontend.views.inspection import render as render_inspection
 
 
 STATUS_COLORS = {

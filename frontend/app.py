@@ -3,6 +3,12 @@
 Run with:  streamlit run frontend/app.py
 """
 
+import sys
+from pathlib import Path
+
+# Ensure project root is on sys.path so "frontend.*" imports resolve
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 
 # -- Page config (must be first Streamlit call) ---------------------------
@@ -126,7 +132,7 @@ def _is_authenticated() -> bool:
 # -- Routing --------------------------------------------------------------
 
 if not _is_authenticated():
-    from frontend.pages.login import render as render_login
+    from frontend.views.login import render as render_login
     render_login()
 else:
     # Sidebar
@@ -154,14 +160,14 @@ else:
 
     # Main area
     if nav == "Dashboard":
-        from frontend.pages.dashboard import render as render_dashboard
+        from frontend.views.dashboard import render as render_dashboard
         render_dashboard()
     elif nav == "New Job":
-        from frontend.pages.new_job import render as render_new_job
+        from frontend.views.new_job import render as render_new_job
         render_new_job()
     elif nav == "Deviation Review":
-        from frontend.pages.deviation_review import render as render_deviation_review
+        from frontend.views.deviation_review import render as render_deviation_review
         render_deviation_review()
     elif nav == "Audit Log":
-        from frontend.pages.audit_log import render as render_audit_log
+        from frontend.views.audit_log import render as render_audit_log
         render_audit_log()
