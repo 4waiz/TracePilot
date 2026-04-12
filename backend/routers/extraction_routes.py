@@ -376,14 +376,18 @@ async def extract_specs(
 
     # Try LLM first, then regex fallback
     extraction_method = "llm"
+    print(f"[extraction] Trying LLM (Ollama/{settings.OLLAMA_MODEL})...")
     result = await _llm_extract(full_text)
 
     if result is None or "specs" not in result:
         extraction_method = "regex"
+        print("[extraction] LLM unavailable or returned no specs — falling back to regex")
         doc_name = docs[0].original_filename if docs else ""
         raw_specs = _regex_extract_specs(full_text, doc_name)
         raw_steps = _generate_default_steps(raw_specs)
         result = {"specs": raw_specs, "steps": raw_steps}
+
+    print(f"[extraction] Using method: {extraction_method.upper()} | RAG collection: {rag_collection or 'none'}")
 
     # Persist specs
     created_specs = []
