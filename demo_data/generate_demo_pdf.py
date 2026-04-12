@@ -378,6 +378,68 @@ def generate_engineering_drawing():
     c.setFont("Helvetica", 8)
     c.drawString(sf_x + 10, sf_y + 35, "Ra 0.800 (max 1.600)")
 
+    # ── GD&T feature control frame for bore concentricity ───────────────────
+    gdt_x = shaft_left + 10
+    gdt_y = shaft_top + 55
+    c.setLineWidth(0.7)
+    c.rect(gdt_x, gdt_y, 120, 16, fill=False)
+    c.line(gdt_x + 40, gdt_y, gdt_x + 40, gdt_y + 16)
+    c.line(gdt_x + 80, gdt_y, gdt_x + 80, gdt_y + 16)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(gdt_x + 20, gdt_y + 4, "\u2295")       # position symbol
+    c.drawCentredString(gdt_x + 60, gdt_y + 4, "\u00d80.020")  # tolerance zone
+    c.drawCentredString(gdt_x + 100, gdt_y + 4, "A")           # datum reference
+    c.setLineWidth(0.5)
+    c.line(gdt_x + 60, gdt_y, gdt_x + 60, shaft_top)
+
+    # ── Dimensional requirements table (plain text, reliably pdfplumber-extracted) ──
+    notes_y = tb_top + 170
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(30, notes_y, "DIMENSIONAL REQUIREMENTS (All dimensions in mm unless noted)")
+
+    dim_specs = [
+        ("Outer Diameter",    "25.400", "\u00b10.013",       "mm",  "Outside Micrometer"),
+        ("Bore Diameter",     "10.000", "+0.018/-0.000",     "mm",  "Bore Gauge"),
+        ("Overall Length",    "150.000", "\u00b10.050",      "mm",  "Height Gauge"),
+        ("Thread Pitch Dia.", "12.700", "\u00b10.025",       "mm",  "Thread Gauge"),
+        ("Surface Finish Ra", "0.800",  "max 1.600",         "\u03bcm", "Profilometer"),
+    ]
+
+    # Header row
+    c.setFont("Helvetica-Bold", 8)
+    y = notes_y - 14
+    c.drawString(30, y, "CHARACTERISTIC")
+    c.drawString(160, y, "NOMINAL")
+    c.drawString(225, y, "TOLERANCE")
+    c.drawString(305, y, "UNIT")
+    c.drawString(345, y, "GAUGE / TOOL")
+
+    c.setFont("Helvetica", 8)
+    for row in dim_specs:
+        y -= 12
+        char, nom, tol, unit, tool = row
+        c.drawString(30, y, char)
+        c.drawString(160, y, nom)
+        c.drawString(225, y, tol)
+        c.drawString(305, y, unit)
+        c.drawString(345, y, tool)
+
+    # ── Critical specs in regex-friendly labeled format ──────────────────────
+    y -= 18
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(30, y, "CRITICAL SPECIFICATIONS:")
+    c.setFont("Helvetica", 9)
+    spec_lines = [
+        "Outer Diameter: 25.400mm, Tolerance: \u00b10.013mm",
+        "Bore Diameter: 10.000mm, Tolerance: \u00b10.009mm",
+        "Overall Length: 150.000mm, Tolerance: \u00b10.050mm",
+        "Thread Pitch Diameter: 12.700mm, Tolerance: \u00b10.025mm",
+        "Surface Finish Ra: 0.800\u03bcm (max 1.600\u03bcm)",
+    ]
+    for line in spec_lines:
+        y -= 12
+        c.drawString(30, y, line)
+
     # ── Notes section ───────────────────────────────────────────────────────
     notes_y = tb_top + 15
     c.setFont("Helvetica-Bold", 9)
