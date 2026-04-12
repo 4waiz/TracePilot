@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "feature_name": "Outer Diameter",
+    "nominal_value": 25.400,
+    "upper_limit": 25.413,
+    "lower_limit": 25.387,
+    "unit": "mm",
+    "tool_required": "Outside Micrometer (0-25mm)"
+  },
+  {
+    "id": 2,
+    "feature_name": "Bore Diameter",
+    "nominal_value": 10.000,
+    "upper_limit": 10.018,
+    "lower_limit": 10.000,
+    "unit": "mm",
+    "tool_required": "Bore Gauge (10mm)"
+  },
+  {
+    "id": 3,
+    "feature_name": "Overall Length",
+    "nominal_value": 150.000,
+    "upper_limit": 150.050,
+    "lower_limit": 149.950,
+    "unit": "mm",
+    "tool_required": "Height Gauge"
+  },
+  {
+    "id": 4,
+    "feature_name": "Thread Pitch Diameter",
+    "nominal_value": 12.700,
+    "upper_limit": 12.725,
+    "lower_limit": 12.675,
+    "unit": "mm",
+    "tool_required": "Thread Gauge"
+  },
+  {
+    "id": 5,
+    "feature_name": "Surface Finish Ra",
+    "nominal_value": 0.800,
+    "upper_limit": 1.600,
+    "lower_limit": 0.000,
+    "unit": "\u03bcm",
+    "tool_required": "Profilometer"
+  }
+]

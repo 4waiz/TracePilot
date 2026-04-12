@@ -1,0 +1,37 @@
+[
+  {
+    "step_number": 1,
+    "instruction_text": "Visual inspection of surface finish and tool marks",
+    "related_spec_ids": [5]
+  },
+  {
+    "step_number": 2,
+    "instruction_text": "Measure outer diameter at 3 positions using micrometer",
+    "related_spec_ids": [1]
+  },
+  {
+    "step_number": 3,
+    "instruction_text": "Measure bore diameter using bore gauge",
+    "related_spec_ids": [2]
+  },
+  {
+    "step_number": 4,
+    "instruction_text": "Verify overall length with height gauge",
+    "related_spec_ids": [3]
+  },
+  {
+    "step_number": 5,
+    "instruction_text": "Check thread pitch diameter with thread gauge",
+    "related_spec_ids": [4]
+  },
+  {
+    "step_number": 6,
+    "instruction_text": "Verify surface finish with profilometer",
+    "related_spec_ids": [5]
+  },
+  {
+    "step_number": 7,
+    "instruction_text": "Final dimensional verification and documentation",
+    "related_spec_ids": [1, 2, 3, 4, 5]
+  }
+]
