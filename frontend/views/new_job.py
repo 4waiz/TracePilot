@@ -69,7 +69,8 @@ def render():
             else:
                 st.warning("Job created but document upload failed.")
 
-        # Navigate to the new job
+        # Navigate to the new job workspace
         st.session_state["selected_job_id"] = job_id
-        st.session_state["nav"] = "Dashboard"
+        st.session_state["workspace_phase"] = "Setup"
+        st.session_state["nav"] = "Job Workspace"
         st.rerun()

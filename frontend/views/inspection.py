@@ -52,11 +52,12 @@ def render(job_id: int):
 
     measured_spec_ids = {m.get("spec_id") for m in measurement_list}
 
-    if "current_step" not in st.session_state:
-        st.session_state["current_step"] = 0
+    step_key = f"current_step_{job_id}"
+    if step_key not in st.session_state:
+        st.session_state[step_key] = 0
 
     if step_list:
-        current_idx = min(st.session_state.get("current_step", 0), len(step_list) - 1)
+        current_idx = min(st.session_state.get(step_key, 0), len(step_list) - 1)
         step = step_list[current_idx]
 
         st.markdown(f"### Step {step.get('step_number', current_idx + 1)}: {step.get('title', '')}")
@@ -81,11 +82,11 @@ def render(job_id: int):
         nav1, _, nav3 = st.columns(3)
         with nav1:
             if current_idx > 0 and st.button("Previous Step"):
-                st.session_state["current_step"] = current_idx - 1
+                st.session_state[step_key] = current_idx - 1
                 st.rerun()
         with nav3:
             if current_idx < len(step_list) - 1 and st.button("Next Step"):
-                st.session_state["current_step"] = current_idx + 1
+                st.session_state[step_key] = current_idx + 1
                 st.rerun()
     else:
         st.markdown("### Measure All Specifications")

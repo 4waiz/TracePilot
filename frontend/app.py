@@ -18,100 +18,9 @@ st.set_page_config(
     layout="wide",
 )
 
-# -- Custom CSS -----------------------------------------------------------
-st.markdown(
-    """
-    <style>
-    /* ---------- header bar ---------- */
-    header[data-testid="stHeader"] {
-        background-color: #1a1a2e !important;
-    }
-
-    /* ---------- sidebar ---------- */
-    section[data-testid="stSidebar"] {
-        background-color: #16213e;
-    }
-    section[data-testid="stSidebar"] .stMarkdown p,
-    section[data-testid="stSidebar"] .stMarkdown h1,
-    section[data-testid="stSidebar"] .stMarkdown h2,
-    section[data-testid="stSidebar"] .stMarkdown h3 {
-        color: #e0e0e0;
-    }
-
-    /* ---------- typography ---------- */
-    html, body, [class*="css"] {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-    }
-    h1, h2, h3 {
-        font-weight: 700;
-        letter-spacing: -0.02em;
-    }
-
-    /* ---------- status / badge colors ---------- */
-    .pass  { color: #28a745 !important; }
-    .fail  { color: #dc3545 !important; }
-    .warn  { color: #ffc107 !important; }
-    .info  { color: #17a2b8 !important; }
-
-    /* ---------- metric cards ---------- */
-    [data-testid="stMetric"] {
-        background: #0e1117;
-        border: 1px solid #333;
-        border-radius: 8px;
-        padding: 12px 16px;
-    }
-    [data-testid="stMetricValue"] {
-        font-size: 2rem;
-        font-weight: 700;
-    }
-
-    /* ---------- dataframe ---------- */
-    .stDataFrame {
-        border-radius: 8px;
-    }
-
-    /* ---------- buttons ---------- */
-    .stButton > button {
-        border-radius: 6px;
-        font-weight: 600;
-        transition: all 0.15s ease;
-    }
-    .stButton > button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .stButton > button[kind="primary"] {
-        background-color: #17a2b8;
-        border: none;
-    }
-
-    /* ---------- tabs ---------- */
-    .stTabs [data-baseweb="tab"] {
-        font-weight: 600;
-    }
-
-    /* ---------- progress bar ---------- */
-    .stProgress > div > div > div {
-        background-color: #28a745;
-    }
-
-    /* ---------- expander ---------- */
-    .streamlit-expanderHeader {
-        font-weight: 600;
-    }
-
-    /* ---------- sensitivity badges ---------- */
-    .sens-general { background: #6c757d; }
-    .sens-confidential { background: #fd7e14; }
-    .sens-highly-confidential { background: #dc3545; }
-
-    /* ---------- hide streamlit branding ---------- */
-    #MainMenu { visibility: hidden; }
-    footer { visibility: hidden; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# -- Inject design system CSS --------------------------------------------
+from frontend.ui import inject_css, chip, C
+inject_css()
 
 # -- Session state defaults -----------------------------------------------
 
@@ -121,6 +30,8 @@ if "user" not in st.session_state:
     st.session_state["user"] = None
 if "nav" not in st.session_state:
     st.session_state["nav"] = "Dashboard"
+if "selected_job_id" not in st.session_state:
+    st.session_state["selected_job_id"] = None
 
 
 # -- Auth gate ------------------------------------------------------------
@@ -135,22 +46,62 @@ if not _is_authenticated():
     from frontend.views.login import render as render_login
     render_login()
 else:
-    # Sidebar
+    user_obj = st.session_state["user"]
+    user_role = user_obj.get("role", "user")
+    username = user_obj.get("username", "")
+
+    # ── Sidebar ──────────────────────────────────────────────────────
     with st.sidebar:
-        st.image("icon.png", width=60)
-        st.markdown("## TracePilot")
-        st.caption(f"Logged in as **{st.session_state['user'].get('username', '')}**")
+        # Brand block
+        st.markdown(
+            f"<div style='text-align:center; padding:8px 0 4px'>"
+            f"<div style='font-size:1.3rem; font-weight:700; color:{C.TEXT}; "
+            f"letter-spacing:-0.03em'>TracePilot</div>"
+            f"<div style='font-size:0.7rem; color:{C.TEXT_MUTED}; "
+            f"text-transform:uppercase; letter-spacing:0.1em; margin-top:2px'>"
+            f"Inspection & Traceability</div></div>",
+            unsafe_allow_html=True,
+        )
         st.markdown("---")
 
-        user_role = st.session_state["user"].get("role", "user")
+        # User block
+        role_color = C.ACCENT if user_role == "admin" else C.SUCCESS if user_role == "supervisor" else C.TEXT_DIM
+        st.markdown(
+            f"<div style='padding:6px 0'>"
+            f"<div style='font-size:0.88rem; font-weight:600; color:{C.TEXT}'>{username}</div>"
+            f"<div style='margin-top:3px'>{chip(user_role, role_color)}</div></div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("---")
 
+        # Navigation
         nav_items = ["Dashboard", "New Job", "Deviation Review"]
+        if st.session_state["selected_job_id"] is not None:
+            nav_items.insert(1, "Job Workspace")
         if user_role == "admin":
             nav_items.append("Audit Log")
 
-        nav = st.radio("Navigation", nav_items, label_visibility="collapsed")
+        nav_icons = {
+            "Dashboard": "◻",
+            "Job Workspace": "▸",
+            "New Job": "+",
+            "Deviation Review": "△",
+            "Audit Log": "☰",
+        }
+
+        nav_labels = [f"{nav_icons.get(i, '·')}  {i}" for i in nav_items]
+        current_nav = st.session_state.get("nav", "Dashboard")
+        default_index = nav_items.index(current_nav) if current_nav in nav_items else 0
+
+        nav_label = st.radio(
+            "Navigation", nav_labels,
+            index=default_index, label_visibility="collapsed",
+        )
+        nav = nav_items[nav_labels.index(nav_label)]
 
         st.markdown("---")
+
+        # Logout
         if st.button("Logout", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
@@ -158,8 +109,15 @@ else:
 
     st.session_state["nav"] = nav
 
-    # Main area
-    if nav == "Dashboard":
+    # ── Main area ────────────────────────────────────────────────────
+    if nav == "Job Workspace":
+        if st.session_state["selected_job_id"] is None:
+            st.session_state["nav"] = "Dashboard"
+            st.rerun()
+        else:
+            from frontend.views.job_workspace import render as render_workspace
+            render_workspace()
+    elif nav == "Dashboard":
         from frontend.views.dashboard import render as render_dashboard
         render_dashboard()
     elif nav == "New Job":
