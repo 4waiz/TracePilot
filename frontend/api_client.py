@@ -136,14 +136,17 @@ class APIClient:
             "title": title, "sensitivity_label": sensitivity,
         })
 
-    def list_jobs(self, token: str):
-        return self._get("/api/jobs/", token)
+    def list_jobs(self, token: str, skip: int = 0, limit: int = 50):
+        return self._get("/api/jobs/", token, params={"skip": skip, "limit": limit})
 
     def get_job(self, token: str, job_id: int):
         return self._get(f"/api/jobs/{job_id}", token)
 
     def update_job_status(self, token: str, job_id: int, status: str):
         return self._patch(f"/api/jobs/{job_id}/status", token, json={"status": status})
+
+    def get_job_summary(self, token: str, job_id: int):
+        return self._get(f"/api/jobs/{job_id}/summary", token)
 
     # -- documents ----------------------------------------------------------
 
@@ -190,6 +193,9 @@ class APIClient:
 
     def get_measurements(self, token: str, job_id: int):
         return self._get(f"/api/inspection/{job_id}/measurements", token)
+
+    def delete_measurement(self, token: str, measurement_id: int):
+        return self._delete(f"/api/inspection/measurements/{measurement_id}", token)
 
     # -- progress -----------------------------------------------------------
 

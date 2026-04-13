@@ -18,6 +18,7 @@ from backend.schemas import DocumentOut
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
 ALLOWED_EXTENSIONS = {".pdf"}
+MAX_UPLOAD_BYTES = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
 
 def _validate_pdf(filename: str) -> None:
@@ -51,6 +52,11 @@ async def upload_documents(
         file_path = os.path.join(job_upload_dir, safe_name)
 
         content = await f.read()
+        if len(content) > MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=f"File '{f.filename}' exceeds the {settings.MAX_UPLOAD_SIZE_MB}MB upload limit",
+            )
         with open(file_path, "wb") as out:
             out.write(content)
 

@@ -1,8 +1,10 @@
 """Authentication routes: login and current-user info."""
 
+import time
+from collections import defaultdict
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -15,12 +17,33 @@ from backend.schemas import UserOut, Token
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
+# In-memory rate limiter: {ip: [timestamp, ...]}
+_login_attempts: dict[str, list[float]] = defaultdict(list)
+
+
+def _check_rate_limit(ip: str) -> None:
+    """Raise 429 if the IP has exceeded the login attempt limit."""
+    now = time.monotonic()
+    window = settings.LOGIN_RATE_WINDOW_SECONDS
+    # Prune old attempts
+    _login_attempts[ip] = [t for t in _login_attempts[ip] if now - t < window]
+    if len(_login_attempts[ip]) >= settings.LOGIN_RATE_LIMIT:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many login attempts. Please try again later.",
+        )
+    _login_attempts[ip].append(now)
+
 
 @router.post("/login", response_model=Token)
 def login(
+    request: Request,
     form: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
+    client_ip = request.client.host if request.client else "unknown"
+    _check_rate_limit(client_ip)
+
     user = db.query(User).filter(User.username == form.username).first()
     if not user or not verify_password(form.password, user.password_hash):
         raise HTTPException(

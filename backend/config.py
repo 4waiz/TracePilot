@@ -27,6 +27,17 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "tracepilot-dev-secret-change-in-production"
     TOKEN_EXPIRE_MINUTES: int = 480
 
+    # CORS -- comma-separated origins, or "*" for permissive dev mode
+    CORS_ORIGINS: str = "*"
+
+    # Upload / request size limits (megabytes)
+    MAX_UPLOAD_SIZE_MB: int = 50
+    MAX_REQUEST_SIZE_MB: int = 60
+
+    # Rate limiting -- max login attempts per IP within the window
+    LOGIN_RATE_LIMIT: int = 5
+    LOGIN_RATE_WINDOW_SECONDS: int = 300
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 

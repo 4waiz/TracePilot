@@ -103,6 +103,35 @@ def record_measurement(
     }
 
 
+@router.delete("/measurements/{measurement_id}", status_code=200)
+def delete_measurement(
+    measurement_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Delete a measurement (and its linked deviation) so a spec can be re-measured."""
+    measurement = db.query(MeasurementEntry).filter(MeasurementEntry.id == measurement_id).first()
+    if not measurement:
+        raise HTTPException(status_code=404, detail="Measurement not found")
+
+    # Delete linked deviations first (cascade would handle it, but be explicit)
+    db.query(Deviation).filter(Deviation.measurement_id == measurement_id).delete()
+    db.delete(measurement)
+    db.commit()
+
+    create_audit_log(
+        db,
+        user_id=current_user.id,
+        username=current_user.username,
+        action="delete_measurement",
+        resource_type="measurement",
+        resource_id=str(measurement_id),
+        details=f"Deleted measurement for spec_id={measurement.spec_id} (re-entry)",
+    )
+
+    return {"detail": "Measurement deleted", "id": measurement_id}
+
+
 @router.get("/{job_id}/measurements")
 def get_measurements(
     job_id: int,

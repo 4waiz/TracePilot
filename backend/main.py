@@ -6,9 +6,9 @@ Configures middleware, startup tasks, and route includes.
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 from backend.config import settings
 from backend.seed import run_seed
@@ -40,22 +40,38 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ── CORS (permissive for development) ────────────────────────────────────────
+# ── Request size limit middleware ────────────────────────────────────────────
+
+MAX_REQUEST_BYTES = settings.MAX_REQUEST_SIZE_MB * 1024 * 1024
+
+
+@app.middleware("http")
+async def limit_request_size(request: Request, call_next):
+    """Reject requests whose Content-Length exceeds the configured limit."""
+    content_length = request.headers.get("content-length")
+    if content_length and int(content_length) > MAX_REQUEST_BYTES:
+        return JSONResponse(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            content={"detail": f"Request body exceeds {settings.MAX_REQUEST_SIZE_MB}MB limit"},
+        )
+    return await call_next(request)
+
+
+# ── CORS (environment-variable-based) ───────────────────────────────────────
+
+_origins = (
+    ["*"]
+    if settings.CORS_ORIGINS.strip() == "*"
+    else [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
+)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ── Static file serving for uploads ──────────────────────────────────────────
-
-# Mount after startup so the directory is guaranteed to exist
-@app.on_event("startup")
-async def mount_static():
-    app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 # ── Routers ──────────────────────────────────────────────────────────────────

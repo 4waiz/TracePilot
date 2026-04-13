@@ -18,7 +18,6 @@ class RoleEnum(str, Enum):
 
 class JobStatusEnum(str, Enum):
     created = "created"
-    uploading = "uploading"
     extracting = "extracting"
     review = "review"
     inspecting = "inspecting"

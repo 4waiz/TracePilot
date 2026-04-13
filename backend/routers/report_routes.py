@@ -43,6 +43,25 @@ def _build_report_data(job: Job, db: Session) -> dict:
     # Build spec lookup for measurement display
     spec_map = {s.id: s for s in specs}
 
+    # Build user lookup so the report shows names, not IDs
+    user_ids = {job.created_by}
+    if job.assigned_supervisor:
+        user_ids.add(job.assigned_supervisor)
+    for m in measurements:
+        user_ids.add(m.measured_by)
+    for a in approvals:
+        user_ids.add(a.approved_by)
+    for dv in deviations:
+        if dv.resolved_by:
+            user_ids.add(dv.resolved_by)
+    user_map: dict[int, str] = {
+        u.id: u.username
+        for u in db.query(User).filter(User.id.in_(user_ids)).all()
+    }
+
+    creator_name = user_map.get(job.created_by, str(job.created_by))
+    supervisor_name = user_map.get(job.assigned_supervisor, "") if job.assigned_supervisor else ""
+
     return {
         "job": {
             "id": job.id,
@@ -50,6 +69,8 @@ def _build_report_data(job: Job, db: Session) -> dict:
             "sensitivity_label": job.sensitivity_label,
             "description": job.description,
             "status": job.status,
+            "operator": creator_name,
+            "supervisor": supervisor_name,
         },
         "documents": [
             {"id": d.id, "filename": d.original_filename, "file_size": d.file_size}
@@ -73,7 +94,7 @@ def _build_report_data(job: Job, db: Session) -> dict:
                 "spec_name": spec_map[m.spec_id].characteristic if m.spec_id in spec_map else f"Spec {m.spec_id}",
                 "actual_value": m.actual_value,
                 "passed": m.passed,
-                "measured_by": m.measured_by,
+                "measured_by": user_map.get(m.measured_by, str(m.measured_by)),
                 "notes": m.notes,
                 "timestamp": m.timestamp.isoformat() if m.timestamp else "",
             }
@@ -87,6 +108,7 @@ def _build_report_data(job: Job, db: Session) -> dict:
                 "actual_value": dv.actual_value,
                 "status": dv.status,
                 "notes": dv.notes,
+                "resolved_by": user_map.get(dv.resolved_by, "") if dv.resolved_by else "",
             }
             for dv in deviations
         ],
@@ -94,7 +116,7 @@ def _build_report_data(job: Job, db: Session) -> dict:
             {
                 "id": a.id,
                 "deviation_id": a.deviation_id,
-                "approved_by": a.approved_by,
+                "approved_by": user_map.get(a.approved_by, str(a.approved_by)),
                 "disposition": a.disposition,
                 "notes": a.notes,
             }
@@ -126,6 +148,9 @@ def _generate_pdf(data: dict, pdf_path: str) -> None:
     elements.append(Spacer(1, 6))
     elements.append(Paragraph(f"<b>Job:</b> {job_info['title']}", normal_style))
     elements.append(Paragraph(f"<b>Job ID:</b> {job_info['id']}", normal_style))
+    elements.append(Paragraph(f"<b>Operator:</b> {job_info.get('operator', 'N/A')}", normal_style))
+    if job_info.get("supervisor"):
+        elements.append(Paragraph(f"<b>Supervisor:</b> {job_info['supervisor']}", normal_style))
     elements.append(Paragraph(f"<b>Sensitivity:</b> {job_info['sensitivity_label']}", normal_style))
     elements.append(Paragraph(f"<b>Status:</b> {job_info['status']}", normal_style))
     elements.append(Paragraph(f"<b>Generated:</b> {data['generated_at']}", normal_style))
@@ -173,11 +198,14 @@ def _generate_pdf(data: dict, pdf_path: str) -> None:
     # Measurements
     elements.append(Paragraph("Measurements", heading_style))
     if data["measurements"]:
-        m_rows = [["Spec", "Actual Value", "Result", "Notes"]]
+        m_rows = [["Spec", "Actual Value", "Result", "Measured By", "Notes"]]
         for m in data["measurements"]:
             result_text = "PASS" if m["passed"] else "FAIL"
-            m_rows.append([m["spec_name"], f"{m['actual_value']:.4f}", result_text, m.get("notes") or ""])
-        t = Table(m_rows, colWidths=[2.0 * inch, 1.5 * inch, 1.0 * inch, 2.0 * inch])
+            m_rows.append([
+                m["spec_name"], f"{m['actual_value']:.4f}", result_text,
+                str(m.get("measured_by", "")), m.get("notes") or "",
+            ])
+        t = Table(m_rows, colWidths=[1.6 * inch, 1.1 * inch, 0.8 * inch, 1.2 * inch, 1.8 * inch])
         style_cmds = list(header_style)
         for row_idx, m in enumerate(data["measurements"], 1):
             bg = colors.HexColor("#c8e6c9") if m["passed"] else colors.HexColor("#ffcdd2")
