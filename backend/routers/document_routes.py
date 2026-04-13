@@ -54,7 +54,7 @@ async def upload_documents(
         content = await f.read()
         if len(content) > MAX_UPLOAD_BYTES:
             raise HTTPException(
-                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status_code=413,
                 detail=f"File '{f.filename}' exceeds the {settings.MAX_UPLOAD_SIZE_MB}MB upload limit",
             )
         with open(file_path, "wb") as out:
