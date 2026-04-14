@@ -2,15 +2,16 @@
 
 import streamlit as st
 from frontend.api_client import api
-from frontend.ui import page_header
+from frontend.ui import page_header, section_number
 
 
 def render():
     """Render the new-job form."""
     token = st.session_state["token"]
 
+    st.markdown(section_number("03"), unsafe_allow_html=True)
     page_header(
-        "Create New Inspection Job",
+        "Create New Job",
         "Set up a first-piece inspection with document upload",
     )
 
