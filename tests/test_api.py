@@ -7,7 +7,7 @@ the new measurement-delete endpoint.
 
 import io
 import os
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -281,6 +281,49 @@ class TestDocumentUpload:
         doc_id = upload_r.json()[0]["id"]
         r = client.get(f"/api/documents/{doc_id}/download", headers=_auth(token))
         assert r.status_code == 200
+
+
+class TestExtraction:
+    def test_extract_falls_back_to_pymupdf_when_pdfplumber_fails(self, monkeypatch):
+        import backend.routers.extraction_routes as extraction_mod
+
+        token = _login()
+        job_r = client.post("/api/jobs/", json={"title": "Extract Test"}, headers=_auth(token))
+        job_id = job_r.json()["id"]
+
+        upload_r = client.post(
+            f"/api/documents/upload/{job_id}",
+            files=[("files", ("demo_sop.pdf", io.BytesIO(b"%PDF-1.4 broken"), "application/pdf"))],
+            headers=_auth(token),
+        )
+        assert upload_r.status_code == 201
+
+        def _broken_pdfplumber(*args, **kwargs):
+            raise ValueError("Invalid dictionary construct")
+
+        class _FakePage:
+            def get_text(self, mode="text"):
+                return "Outer Diameter: 25.400 mm, Tolerance: 0.013"
+
+        class _FakeDoc:
+            def __iter__(self):
+                return iter([_FakePage()])
+
+            def close(self):
+                return None
+
+        monkeypatch.setattr(extraction_mod.pdfplumber, "open", _broken_pdfplumber)
+        monkeypatch.setattr(extraction_mod.fitz, "open", lambda *args, **kwargs: _FakeDoc())
+        monkeypatch.setattr(extraction_mod, "_build_rag_collection", AsyncMock(return_value=None))
+        monkeypatch.setattr(extraction_mod, "_llm_extract", AsyncMock(return_value=None))
+
+        r = client.post(f"/api/extraction/{job_id}/extract", headers=_auth(token))
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["method"] == "regex"
+        assert body["specs_count"] == 1
+        assert body["specs"][0]["characteristic"] == "Outer Diameter"
+        assert body["specs"][0]["source_document"] == "demo_sop.pdf"
 
 
 # ── Measurement + Deviation tests ────────────────────────────────────────────

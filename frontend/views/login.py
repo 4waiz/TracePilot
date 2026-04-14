@@ -1,4 +1,4 @@
-"""Login page for TracePilot."""
+"""Login page — EDGE Group design language."""
 
 import streamlit as st
 from frontend.api_client import api
@@ -6,138 +6,150 @@ from frontend.api_client import api
 
 def render():
     """Render the login page."""
-    st.markdown("<div style='height: 60px'></div>", unsafe_allow_html=True)
 
-    col_left, col_center, col_right = st.columns([1, 2, 1])
+    st.markdown(
+        """
+        <style>
+        /* Login form override */
+        [data-testid="stForm"] {
+            background: #FFFFFF !important;
+            border: 1px solid #E5E3E0 !important;
+            border-radius: 4px !important;
+            padding: 2.5rem 2.5rem 2rem !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+        }
+        .edge-login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .edge-login-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #C65D3D;
+            margin-bottom: 4px;
+        }
+        .edge-login-subtitle {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #1A1A1A;
+            margin: 0;
+        }
+        .edge-login-desc {
+            font-size: 0.85rem;
+            color: #8A8A8A;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+        .edge-divider {
+            border: none;
+            border-top: 2px solid #C65D3D;
+            width: 40px;
+            margin: 16px auto;
+        }
+        .edge-roles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .edge-role {
+            background: #F5F4F2;
+            border: 1px solid #E5E3E0;
+            border-radius: 4px;
+            padding: 18px 14px;
+            text-align: center;
+            transition: box-shadow 0.15s ease;
+        }
+        .edge-role:hover {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .edge-role-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.10em;
+            color: #1A1A1A;
+            margin-bottom: 6px;
+        }
+        .edge-role-cred {
+            font-size: 0.72rem;
+            color: #C65D3D;
+            font-family: 'Inter', monospace;
+            font-weight: 600;
+        }
+        .edge-role-desc {
+            font-size: 0.70rem;
+            color: #8A8A8A;
+            margin-top: 8px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+        .edge-workflow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .edge-workflow-step {
+            background: #FFFFFF;
+            border: 1px solid #E5E3E0;
+            color: #4A4A4A;
+            padding: 6px 14px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .edge-workflow-arrow {
+            color: #B0ADAA;
+            font-size: 0.8rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("<div style='height: 30px'></div>", unsafe_allow_html=True)
+
+    _, col_center, _ = st.columns([1.3, 2, 1.3])
 
     with col_center:
-        logo_col1, logo_col2, logo_col3 = st.columns([1, 1, 1])
-        with logo_col2:
-            st.image("logo.png", width=300)
+        # Logo
+        logo_l, logo_c, logo_r = st.columns([1, 1, 1])
+        with logo_c:
+            st.image("logo.png", width=260)
 
         st.markdown(
-            "<h1 style='text-align:center; margin-bottom:0; margin-top:4px; padding: 0; color: #8B0000;'>TracePilot</h1>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "<p style='text-align:center; color:#6c757d; margin-bottom:3rem; margin-top:0.5rem'>"
-            "Secure First-Piece Inspection &amp; Traceability</p>",
-            unsafe_allow_html=True,
-        )
-
-        # Custom login form styling
-        st.markdown(
-            """
-            <style>
-            .stForm {
-                background: linear-gradient(135deg, #771b2a 0%, #5a1420 100%) !important;
-                border-radius: 28px !important;
-                padding: 48px 40px !important;
-                box-shadow: 0 12px 32px rgba(0,0,0,0.3) !important;
-                width: 400px !important;
-                margin: 0 auto !important;
-            }
-            .stForm > div {
-                background: transparent !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            .stImage img {
-                max-width: none !important;
-            }
-            .stImage {
-                display: flex !important;
-                justify-content: center !important;
-                margin-top: 20px !important;
-            }
-            .login-field {
-                margin-bottom: 32px;
-            }
-            .login-field label {
-                color: #ffffff;
-                font-size: 22px;
-                font-weight: 600;
-                display: block;
-                margin-bottom: 16px;
-                letter-spacing: 0.3px;
-            }
-            .stTextInput > div > div > input {
-                width: 100% !important;
-                padding: 16px 24px !important;
-                border-radius: 24px !important;
-                background: #c9a876 !important;
-                border: none !important;
-                font-size: 16px !important;
-                color: #333 !important;
-                transition: all 0.3s ease !important;
-                height: 50px !important;
-                box-sizing: border-box !important;
-            }
-            .stTextInput > div > div > input::placeholder {
-                color: #999 !important;
-            }
-            .stTextInput > div > div > input:focus {
-                background: #d4b896 !important;
-                box-shadow: 0 4px 12px rgba(201, 168, 118, 0.3) !important;
-                outline: none !important;
-            }
-            .login-button {
-                margin-top: 32px;
-            }
-            .login-button button {
-                background: #c9a876 !important;
-                color: #ffffff !important;
-                font-size: 16px !important;
-                font-weight: 700 !important;
-                padding: 14px 32px !important;
-                border-radius: 24px !important;
-                border: none !important;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-                transition: all 0.3s ease !important;
-                cursor: pointer !important;
-                width: 100% !important;
-            }
-            .login-button button:hover {
-                background: #d4b896 !important;
-                box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
-                transform: translateY(-1px) !important;
-            }
-            </style>
-            """,
+            "<div class='edge-login-header'>"
+            "<hr class='edge-divider'>"
+            "<div class='edge-login-title'>Secure Platform</div>"
+            "<div class='edge-login-subtitle'>TracePilot</div>"
+            "<div class='edge-login-desc'>First-Piece Inspection &amp; Traceability</div>"
+            "</div>",
             unsafe_allow_html=True,
         )
 
+        # Login form
         with st.form("login_form"):
-            st.markdown(
-                "<div class='login-field'><label>username:</label></div>",
-                unsafe_allow_html=True,
-            )
             username = st.text_input(
-                "",
-                placeholder="Enter username",
-                label_visibility="collapsed",
+                "Username",
+                placeholder="Enter your username",
                 key="username_input",
             )
-
-            st.markdown(
-                "<div class='login-field'><label>Password:</label></div>",
-                unsafe_allow_html=True,
-            )
             password = st.text_input(
-                "",
+                "Password",
                 type="password",
-                placeholder="Enter password",
-                label_visibility="collapsed",
+                placeholder="Enter your password",
                 key="password_input",
             )
-
-            st.markdown("<div class='login-button'>", unsafe_allow_html=True)
-            submitted = st.form_submit_button(
-                "Login",
-                use_container_width=True,
-            )
-            st.markdown("</div>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("Sign In", use_container_width=True)
 
         if submitted:
             username = username.strip()
@@ -161,10 +173,41 @@ def render():
             elif result is not None:
                 st.error("Invalid credentials. Please try again.")
 
+        # Role cards
         st.markdown("---")
-        st.info(
-            "**Demo credentials**  \n"
-            "Operator: `operator` / `operator123`  \n"
-            "Supervisor: `supervisor` / `supervisor123`  \n"
-            "Admin: `admin` / `admin123`"
+        st.markdown(
+            "<div class='edge-roles'>"
+            "<div class='edge-role'>"
+            "<div class='edge-role-title'>Operator</div>"
+            "<div class='edge-role-cred'>operator / operator123</div>"
+            "<div class='edge-role-desc'>Create jobs, upload drawings, run AI extraction, record measurements</div>"
+            "</div>"
+            "<div class='edge-role'>"
+            "<div class='edge-role-title'>Supervisor</div>"
+            "<div class='edge-role-cred'>supervisor / supervisor123</div>"
+            "<div class='edge-role-desc'>All operator capabilities plus review &amp; approve deviations</div>"
+            "</div>"
+            "<div class='edge-role'>"
+            "<div class='edge-role-title'>Admin</div>"
+            "<div class='edge-role-cred'>admin / admin123</div>"
+            "<div class='edge-role-desc'>Full access including audit logs and system management</div>"
+            "</div>"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+
+        # Workflow
+        st.markdown(
+            "<div class='edge-workflow'>"
+            "<span class='edge-workflow-step'>Upload</span>"
+            "<span class='edge-workflow-arrow'>&#8594;</span>"
+            "<span class='edge-workflow-step'>Extract</span>"
+            "<span class='edge-workflow-arrow'>&#8594;</span>"
+            "<span class='edge-workflow-step'>Review</span>"
+            "<span class='edge-workflow-arrow'>&#8594;</span>"
+            "<span class='edge-workflow-step'>Inspect</span>"
+            "<span class='edge-workflow-arrow'>&#8594;</span>"
+            "<span class='edge-workflow-step'>Report</span>"
+            "</div>",
+            unsafe_allow_html=True,
         )

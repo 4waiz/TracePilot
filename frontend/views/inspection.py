@@ -1,4 +1,4 @@
-"""Guided inspection workflow page."""
+"""Guided inspection workflow page with re-measurement support."""
 
 import streamlit as st
 from frontend.api_client import api
@@ -50,7 +50,13 @@ def render(job_id: int):
         p3.metric("Failed", failed)
     st.markdown("---")
 
-    measured_spec_ids = {m.get("spec_id") for m in measurement_list}
+    # Build measurement lookup: spec_id -> list of measurements (latest last)
+    measurements_by_spec: dict[int, list] = {}
+    for m in measurement_list:
+        sid = m.get("spec_id")
+        measurements_by_spec.setdefault(sid, []).append(m)
+
+    measured_spec_ids = set(measurements_by_spec.keys())
 
     step_key = f"current_step_{job_id}"
     if step_key not in st.session_state:
@@ -76,7 +82,7 @@ def render(job_id: int):
             linked_specs = [s for s in confirmed_specs if s.get("id") not in measured_spec_ids]
 
         for spec in linked_specs[:3]:
-            _render_spec_measurement(token, job_id, spec, measurement_list, measured_spec_ids)
+            _render_spec_measurement(token, job_id, spec, measurements_by_spec)
 
         # Navigation
         nav1, _, nav3 = st.columns(3)
@@ -91,7 +97,7 @@ def render(job_id: int):
     else:
         st.markdown("### Measure All Specifications")
         for spec in confirmed_specs:
-            _render_spec_measurement(token, job_id, spec, measurement_list, measured_spec_ids)
+            _render_spec_measurement(token, job_id, spec, measurements_by_spec)
 
     # Complete inspection
     if progress and progress.get("measured", 0) >= progress.get("total_specs", 0) and progress.get("total_specs", 0) > 0:
@@ -103,29 +109,71 @@ def render(job_id: int):
                 st.rerun()
 
 
-def _render_spec_measurement(token, job_id, spec, measurement_list, measured_spec_ids):
+def _render_spec_measurement(token, job_id, spec, measurements_by_spec):
+    """Render a single spec with its measurement input or result, including re-measure option."""
     spec_id = spec.get("id")
-    already_measured = spec_id in measured_spec_ids
+    prev_measurements = measurements_by_spec.get(spec_id, [])
+    already_measured = len(prev_measurements) > 0
 
     st.markdown(f"**{spec.get('characteristic', 'Unknown')}**")
     st.caption(
-        f"Nominal: {spec.get('nominal', 0):.4f} {spec.get('unit', 'mm')} | "
+        f"Nominal: {spec.get('nominal', 0):.4f} {spec.get('unit', 'mm')}  |  "
         f"Limits: [{spec.get('lower_limit', 0):.4f}, {spec.get('upper_limit', 0):.4f}]"
     )
     if spec.get("tool_required"):
         st.caption(f"Tool: {spec['tool_required']}")
 
     if already_measured:
-        prev = [m for m in measurement_list if m.get("spec_id") == spec_id]
-        if prev:
-            m = prev[-1]
-            result_text = "PASS" if m.get("passed") else "FAIL"
-            result_color = "#28a745" if m.get("passed") else "#dc3545"
-            st.markdown(
-                f"Measured: **{m.get('actual_value', 0):.4f}** -- "
-                f"<span style='color:{result_color}; font-weight:bold'>{result_text}</span>",
-                unsafe_allow_html=True,
+        m = prev_measurements[-1]  # latest measurement
+        result_text = "PASS" if m.get("passed") else "FAIL"
+        result_color = "#10b981" if m.get("passed") else "#ef4444"
+        result_bg = "rgba(16,185,129,0.08)" if m.get("passed") else "rgba(239,68,68,0.08)"
+
+        st.markdown(
+            f"<div style='background:{result_bg}; border:1px solid {result_color}20; "
+            f"border-radius:8px; padding:10px 16px; margin:4px 0 8px'>"
+            f"<span style='font-size:0.92rem'>Measured: <strong>{m.get('actual_value', 0):.4f}</strong></span>"
+            f"<span style='margin-left:12px; color:{result_color}; font-weight:700; "
+            f"font-size:0.85rem'>{result_text}</span>"
+            f"</div>",
+            unsafe_allow_html=True,
+        )
+
+        # Re-measure option (delete old + enter new)
+        remeasure_key = f"remeasure_{spec_id}"
+        if st.session_state.get(remeasure_key):
+            st.caption("Enter the new measurement value:")
+            new_val = st.number_input(
+                f"New measurement for {spec.get('characteristic', '')}",
+                format="%.4f", key=f"remeas_val_{spec_id}",
+                label_visibility="collapsed",
             )
+            col_submit, col_cancel = st.columns(2)
+            with col_submit:
+                if st.button("Submit", key=f"remeas_submit_{spec_id}", type="primary"):
+                    # Delete old measurement, then record new
+                    m_id = m.get("id")
+                    api.delete_measurement(token, m_id)
+                    result = api.submit_measurement(token, job_id, spec_id, new_val)
+                    if result:
+                        st.session_state[remeasure_key] = False
+                        if result.get("passed"):
+                            st.success(f"PASS -- {new_val:.4f} is within tolerance.")
+                        else:
+                            dev_info = result.get("deviation", {})
+                            st.error(
+                                f"FAIL -- {new_val:.4f} is out of tolerance! "
+                                f"Deviation #{dev_info.get('id', '?')} created."
+                            )
+                        st.rerun()
+            with col_cancel:
+                if st.button("Cancel", key=f"remeas_cancel_{spec_id}"):
+                    st.session_state[remeasure_key] = False
+                    st.rerun()
+        else:
+            if st.button("Re-measure", key=f"remeas_btn_{spec_id}"):
+                st.session_state[remeasure_key] = True
+                st.rerun()
     else:
         value = st.number_input(
             f"Enter measurement for {spec.get('characteristic', '')}",
@@ -135,12 +183,12 @@ def _render_spec_measurement(token, job_id, spec, measurement_list, measured_spe
             result = api.submit_measurement(token, job_id, spec_id, value)
             if result:
                 if result.get("passed"):
-                    st.success(f"PASS - Value {value:.4f} is within tolerance.")
+                    st.success(f"PASS -- Value {value:.4f} is within tolerance.")
                 else:
                     dev_info = result.get("deviation", {})
                     st.error(
-                        f"FAIL - Value {value:.4f} is out of tolerance! "
-                        f"Deviation created (#{dev_info.get('id', '?')})"
+                        f"FAIL -- Value {value:.4f} is out of tolerance! "
+                        f"Deviation #{dev_info.get('id', '?')} created."
                     )
                 st.rerun()
     st.markdown("---")

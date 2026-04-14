@@ -2,35 +2,48 @@
 
 import streamlit as st
 from frontend.api_client import api
+from frontend.ui import page_header
 
 
 def render():
     """Render the new-job form."""
     token = st.session_state["token"]
 
-    st.header("Create New Inspection Job")
-    st.markdown("---")
+    page_header(
+        "Create New Inspection Job",
+        "Set up a first-piece inspection with document upload",
+    )
 
     with st.form("new_job_form"):
         title = st.text_input(
-            "Job Title", placeholder="e.g. Bracket Assembly FPI - PO 2024-0412"
+            "Job Title",
+            placeholder="e.g. Bracket Assembly FPI - PO 2024-0412",
+            help="A descriptive name for this inspection job.",
         )
 
-        sensitivity = st.selectbox(
-            "Sensitivity Label",
-            options=["General", "Confidential", "Highly Confidential"],
-            help=(
-                "**General** -- no restrictions.  \n"
-                "**Confidential** -- limited access, audit-logged.  \n"
-                "**Highly Confidential** -- encrypted at rest, strict RBAC."
-            ),
+        description = st.text_area(
+            "Description (optional)",
+            placeholder="Any additional notes about this inspection...",
+            height=80,
         )
+
+        c1, c2 = st.columns(2)
+        with c1:
+            sensitivity = st.selectbox(
+                "Sensitivity Label",
+                options=["General", "Confidential", "Highly Confidential"],
+                help=(
+                    "**General** -- no restrictions.  \n"
+                    "**Confidential** -- limited access, audit-logged.  \n"
+                    "**Highly Confidential** -- encrypted at rest, strict RBAC."
+                ),
+            )
 
         uploaded_files = st.file_uploader(
             "Upload Inspection Documents (PDF)",
             type=["pdf"],
             accept_multiple_files=True,
-            help="Upload up to 3 PDF documents (drawings, specs, work instructions).",
+            help="Upload PDF documents (drawings, specs, work instructions). Max 50MB per file.",
         )
 
         if uploaded_files and len(uploaded_files) > 3:

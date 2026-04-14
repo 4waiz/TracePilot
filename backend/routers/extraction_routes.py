@@ -5,6 +5,7 @@ import re
 from typing import List, Optional
 
 import chromadb
+import fitz
 import httpx
 import pdfplumber
 from chromadb.config import Settings as ChromaSettings
@@ -47,6 +48,41 @@ _PAT_LABELED = re.compile(
 )
 
 _VALID_UNITS = {"mm", "cm", "m", "in", "μm", "um", "deg", "°", '"', "'", "ra"}
+
+
+def _extract_text_with_pdfplumber(pdf_path: str) -> str:
+    text_parts: List[str] = []
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text_parts.append(page_text)
+    return "\n".join(text_parts)
+
+
+def _extract_text_with_pymupdf(pdf_path: str) -> str:
+    text_parts: List[str] = []
+    doc = fitz.open(pdf_path)
+    try:
+        for page in doc:
+            page_text = page.get_text("text")
+            if page_text:
+                text_parts.append(page_text)
+    finally:
+        doc.close()
+    return "\n".join(text_parts)
+
+
+def _extract_text_from_pdf(pdf_path: str) -> str:
+    try:
+        return _extract_text_with_pdfplumber(pdf_path)
+    except Exception as pdfplumber_exc:
+        try:
+            return _extract_text_with_pymupdf(pdf_path)
+        except Exception as pymupdf_exc:
+            raise RuntimeError(
+                f"pdfplumber failed: {pdfplumber_exc}; PyMuPDF failed: {pymupdf_exc}"
+            ) from pymupdf_exc
 
 
 def _regex_extract_specs(text: str, doc_name: str = "") -> List[dict]:
@@ -354,11 +390,9 @@ async def extract_specs(
     full_text = ""
     for doc in docs:
         try:
-            with pdfplumber.open(doc.file_path) as pdf:
-                for page in pdf.pages:
-                    page_text = page.extract_text()
-                    if page_text:
-                        full_text += page_text + "\n"
+            doc_text = _extract_text_from_pdf(doc.file_path)
+            if doc_text:
+                full_text += doc_text + "\n"
         except Exception as exc:
             raise HTTPException(
                 status_code=400,

@@ -50,14 +50,9 @@ else:
     user_role = user_obj.get("role", "user")
     username = user_obj.get("username", "")
 
-    # ── Top navbar with logo ─────────────────────────────────────────
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("logo2.png", width=250, use_container_width=False)
-
     # ── Sidebar ──────────────────────────────────────────────────────
     with st.sidebar:
-        # Logo (centered)
+        # Logo
         col_l, col_c, col_r = st.columns([1, 3, 1])
         with col_c:
             st.image("icon2.png", use_container_width=True)
@@ -74,8 +69,8 @@ else:
 
         # User block
         initial = username[0].upper() if username else "U"
-        role_colors = {"admin": "#ff5622", "supervisor": "#22c55e", "operator": "#38bdf8"}
-        rc = role_colors.get(user_role, "#64748b")
+        role_colors = {"admin": "#C65D3D", "supervisor": "#2E8B57", "operator": "#3B7DD8"}
+        rc = role_colors.get(user_role, "#8A8A8A")
         st.markdown(
             f"<div class='sidebar-user'>"
             f"<div class='sidebar-avatar'>{initial}</div>"
@@ -88,9 +83,10 @@ else:
         st.markdown("---")
 
         # Navigation
-        nav_items = ["Dashboard", "New Job", "Deviation Review"]
+        nav_items = ["Dashboard", "New Job"]
         if st.session_state["selected_job_id"] is not None:
-            nav_items.insert(1, "Job Workspace")
+            nav_items.append("Job Workspace")
+        nav_items.append("Deviation Review")
         if user_role == "admin":
             nav_items.append("Audit Log")
 
@@ -101,10 +97,7 @@ else:
             is_active = (item == current_nav)
             if is_active:
                 st.markdown(
-                    f"<div style='padding:10px 16px; margin:2px 8px; border-radius:0 7px 7px 0; "
-                    f"border-left:3px solid #ff5622; background:rgba(255,86,34,0.15); "
-                    f"color:#ffffff; font-size:0.85rem; font-weight:600; cursor:pointer'>"
-                    f"{item}</div>",
+                    f"<div class='sidebar-nav-active'>{item}</div>",
                     unsafe_allow_html=True,
                 )
             if st.button(item, key=f"nav_{item}", use_container_width=True):
@@ -113,10 +106,10 @@ else:
 
         nav = current_nav
 
-        st.markdown("<div style='margin-top:16px'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top:20px'></div>", unsafe_allow_html=True)
 
         # Logout
-        if st.button("⏻  Sign Out", key="sidebar_logout", use_container_width=True):
+        if st.button("Sign Out", key="sidebar_logout", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
