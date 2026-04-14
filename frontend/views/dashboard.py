@@ -31,31 +31,50 @@ def render():
     completed = sum(1 for j in jobs if j.get("status") == "completed")
     deviations = sum(1 for j in jobs if j.get("status") == "deviation")
 
-    kpi_row([
-        ("Total", str(total), C.TEXT),
-        ("In Progress", str(in_progress), C.INFO),
-        ("Completed", str(completed), C.SUCCESS),
-        ("Deviations", str(deviations), C.DANGER if deviations else C.TEXT_MUTED),
-    ])
+    kpi_data = [
+        ("Total", str(total), "total"),
+        ("In Progress", str(in_progress), "progress"),
+        ("Completed", str(completed), "completed"),
+        ("Deviations", str(deviations), "deviation"),
+    ]
 
-    st.markdown("")  # spacer
+    st.markdown(
+        "<div class='dashboard-kpi-strip'>"
+        + "".join(
+            f"<div class='dashboard-kpi-card dashboard-kpi-card--{kind}'>"
+            f"<div class='dashboard-kpi-value'>{value}</div>"
+            f"<div class='dashboard-kpi-label'>{label}</div>"
+            f"</div>"
+            for label, value, kind in kpi_data
+        )
+        + "</div>",
+        unsafe_allow_html=True,
+    )
 
     # ── Job list ─────────────────────────────────────────────────────
     if not jobs:
-        empty_state("📋", "No inspection jobs yet", "Create one using + New Job in the sidebar")
+        st.markdown(
+            "<div class='dashboard-empty'>"
+            "<div class='dashboard-empty-title'>No inspection jobs yet</div>"
+            "<div class='dashboard-empty-subtitle'>Create one using New Job in the sidebar</div>"
+            "</div>",
+            unsafe_allow_html=True,
+        )
         return
 
-    section_title("Jobs", str(len(jobs)))
-
-    # Table header
+    # Table card wrapper
     st.markdown(
-        f"<div style='display:flex; align-items:center; padding:6px 14px; "
-        f"font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; "
-        f"color:{C.TEXT_MUTED}; font-weight:600; border-bottom:1px solid {C.BORDER}'>"
-        f"<span style='width:48px'>ID</span>"
-        f"<span style='flex:1'>Title</span>"
-        f"<span style='width:110px; text-align:center'>Status</span>"
-        f"<span style='width:130px; text-align:center'>Sensitivity</span>"
+        f"<div class='dashboard-table-card'>"
+        f"<div class='dashboard-table-card-header'>"
+        f"<span class='dashboard-table-card-title'>Jobs</span>"
+        f"<span class='dashboard-table-card-count'>{len(jobs)}</span>"
+        f"</div>"
+        f"<div class='dashboard-table-header'>"
+        f"<span class='dashboard-row-id'>ID</span>"
+        f"<span class='dashboard-row-title'>Title</span>"
+        f"<span class='dashboard-row-status'>Status</span>"
+        f"<span class='dashboard-row-sensitivity'>Sensitivity</span>"
+        f"</div>"
         f"</div>",
         unsafe_allow_html=True,
     )
@@ -69,15 +88,12 @@ def render():
 
         # Data row
         st.markdown(
-            f"<div style='display:flex; align-items:center; padding:9px 14px; "
-            f"border-bottom:1px solid {C.BORDER}; transition:background 0.1s'>"
-            f"<span style='width:48px; color:{C.TEXT_MUTED}; font-weight:600; "
-            f"font-size:0.82rem'>#{jid}</span>"
-            f"<span style='flex:1; font-weight:500; color:{C.TEXT}; "
-            f"font-size:0.9rem'>{job.get('title', 'Untitled')}</span>"
-            f"<span style='width:110px; text-align:center'>"
+            f"<div class='dashboard-row'>"
+            f"<span class='dashboard-row-id'>#{jid}</span>"
+            f"<span class='dashboard-row-title'>{job.get('title', 'Untitled')}</span>"
+            f"<span class='dashboard-row-status'>"
             f"{chip(status, status_color)}</span>"
-            f"<span style='width:130px; text-align:center'>"
+            f"<span class='dashboard-row-sensitivity'>"
             f"{chip(sensitivity.replace('_', ' ').title(), sens_color, filled=False)}</span>"
             f"</div>",
             unsafe_allow_html=True,
@@ -93,7 +109,6 @@ def render():
                 st.rerun()
 
     st.markdown(
-        f"<div style='text-align:right; padding:8px 14px; font-size:0.72rem; "
-        f"color:{C.TEXT_MUTED}'>{len(jobs)} job(s)</div>",
+        f"<div class='dashboard-footer'>{len(jobs)} job(s)</div>",
         unsafe_allow_html=True,
     )

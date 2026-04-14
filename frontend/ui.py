@@ -5,6 +5,7 @@ Used across all pages for visual consistency.
 """
 
 import streamlit as st
+import sass
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -63,198 +64,14 @@ class C:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# GLOBAL CSS — inject once from app.py
-# ═══════════════════════════════════════════════════════════════════════════
-
-GLOBAL_CSS = f"""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-/* ── Reset & canvas ─────────────────────────────────────────── */
-html, body, [class*="css"] {{
-    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
-}}
-
-.stApp {{
-    background-color: {C.BG_BASE};
-}}
-
-.block-container {{
-    padding-top: 1.5rem;
-    padding-bottom: 2rem;
-    max-width: 1200px;
-}}
-
-/* ── Header ─────────────────────────────────────────────────── */
-header[data-testid="stHeader"] {{
-    background: {C.BG_BASE} !important;
-    border-bottom: 1px solid {C.BORDER};
-}}
-
-/* ── Sidebar ────────────────────────────────────────────────── */
-section[data-testid="stSidebar"] {{
-    background: {C.BG_SURFACE};
-    border-right: 1px solid {C.BORDER};
-}}
-section[data-testid="stSidebar"] > div:first-child {{
-    padding-top: 1rem;
-}}
-section[data-testid="stSidebar"] .stMarkdown p,
-section[data-testid="stSidebar"] .stMarkdown h1,
-section[data-testid="stSidebar"] .stMarkdown h2,
-section[data-testid="stSidebar"] .stMarkdown h3,
-section[data-testid="stSidebar"] .stMarkdown span,
-section[data-testid="stSidebar"] .stMarkdown label {{
-    color: {C.TEXT};
-}}
-section[data-testid="stSidebar"] hr {{
-    border-color: {C.BORDER};
-    margin: 0.6rem 0;
-}}
-
-/* Sidebar radio nav */
-section[data-testid="stSidebar"] .stRadio > div {{
-    gap: 1px;
-}}
-section[data-testid="stSidebar"] .stRadio label {{
-    padding: 9px 14px !important;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.12s;
-}}
-section[data-testid="stSidebar"] .stRadio label:hover {{
-    background: {C.ACCENT_DIM};
-}}
-section[data-testid="stSidebar"] .stRadio label[data-checked="true"],
-section[data-testid="stSidebar"] .stRadio [aria-checked="true"] {{
-    background: {C.ACCENT_DIM} !important;
-    border-left: 3px solid {C.ACCENT};
-}}
-
-/* ── Typography ─────────────────────────────────────────────── */
-h1 {{ font-weight: 700; letter-spacing: -0.03em; font-size: 1.6rem !important; color: {C.TEXT} !important; }}
-h2 {{ font-weight: 700; letter-spacing: -0.02em; font-size: 1.25rem !important; color: {C.TEXT} !important; }}
-h3 {{ font-weight: 600; letter-spacing: -0.01em; font-size: 1.05rem !important; color: {C.TEXT} !important; }}
-
-/* ── Metric cards ───────────────────────────────────────────── */
-[data-testid="stMetric"] {{
-    background: {C.BG_SURFACE};
-    border: 1px solid {C.BORDER};
-    border-radius: 8px;
-    padding: 12px 14px;
-}}
-[data-testid="stMetricValue"] {{
-    font-size: 1.6rem;
-    font-weight: 700;
-}}
-[data-testid="stMetricLabel"] {{
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: {C.TEXT_DIM} !important;
-}}
-
-/* ── Buttons ────────────────────────────────────────────────── */
-.stButton > button {{
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0.4rem 1rem;
-    transition: all 0.12s ease;
-    border: 1px solid {C.BORDER_STRONG};
-    background: {C.BG_RAISED};
-    color: {C.TEXT};
-}}
-.stButton > button:hover {{
-    background: {C.BG_OVERLAY};
-    border-color: {C.ACCENT};
-    color: {C.ACCENT_HOVER};
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}}
-.stButton > button[kind="primary"] {{
-    background: {C.ACCENT};
-    border: none;
-    color: #fff;
-}}
-.stButton > button[kind="primary"]:hover {{
-    background: {C.ACCENT_HOVER};
-    box-shadow: 0 4px 16px rgba(14,165,233,0.3);
-}}
-
-/* ── Inputs ─────────────────────────────────────────────────── */
-.stTextInput > div > div > input,
-.stNumberInput > div > div > input,
-.stTextArea > div > div > textarea,
-.stSelectbox > div > div {{
-    background: {C.BG_BASE} !important;
-    border-color: {C.BORDER_STRONG} !important;
-    color: {C.TEXT} !important;
-    border-radius: 6px;
-}}
-
-/* ── Expanders ──────────────────────────────────────────────── */
-details[data-testid="stExpander"] {{
-    border: 1px solid {C.BORDER};
-    border-radius: 8px;
-    background: {C.BG_SURFACE};
-}}
-details[data-testid="stExpander"] summary {{
-    font-weight: 600;
-    font-size: 0.88rem;
-}}
-
-/* ── Progress bar ───────────────────────────────────────────── */
-.stProgress > div > div > div {{
-    background: linear-gradient(90deg, {C.SUCCESS}, #16a34a);
-    border-radius: 3px;
-}}
-
-/* ── Horizontal radio (phase selector) ──────────────────────── */
-.stRadio[data-testid="stRadio"] > div[role="radiogroup"] {{
-    gap: 2px;
-    background: {C.BG_SURFACE};
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid {C.BORDER};
-}}
-
-/* ── Alerts ─────────────────────────────────────────────────── */
-.stAlert {{
-    border-radius: 6px;
-    font-size: 0.88rem;
-}}
-
-/* ── File uploader ──────────────────────────────────────────── */
-[data-testid="stFileUploader"] {{
-    border-radius: 8px;
-}}
-[data-testid="stFileUploader"] section {{
-    border-color: {C.BORDER_STRONG} !important;
-    background: {C.BG_SURFACE};
-}}
-
-/* ── Dividers ───────────────────────────────────────────────── */
-hr {{
-    border-color: {C.BORDER} !important;
-    margin: 0.75rem 0 !important;
-}}
-
-/* ── Hide branding ──────────────────────────────────────────── */
-#MainMenu {{ visibility: hidden; }}
-footer {{ visibility: hidden; }}
-</style>
-"""
-
-
-# ═══════════════════════════════════════════════════════════════════════════
 # RENDER HELPERS
 # ═══════════════════════════════════════════════════════════════════════════
 
 def inject_css():
     """Call once from app.py to inject the entire design system."""
-    st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
+    # Compile SASS to CSS
+    css = sass.compile(filename="frontend/styles.scss")
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 
 def chip(text: str, color: str, filled: bool = True) -> str:
@@ -371,33 +188,35 @@ def progress_track(phases: list[str], completion: dict, current: str):
         active = (p == current)
 
         if done:
-            bg = C.SUCCESS
+            bg = "#ff5622"
             fg = "#fff"
-            border = C.SUCCESS
+            border = "#ff5622"
             label = f"✓ {p}"
         elif active:
-            bg = C.ACCENT
+            bg = "#434b51"
             fg = "#fff"
-            border = C.ACCENT
+            border = "#434b51"
             label = p
         else:
             bg = "transparent"
-            fg = C.TEXT_MUTED
-            border = C.BORDER
+            fg = "#8a9199"
+            border = "#d1d5db"
             label = p
 
         pills.append(
-            f"<span style='display:inline-block; padding:4px 12px; margin:2px; "
-            f"border-radius:4px; font-size:0.72rem; font-weight:600; "
+            f"<span style='display:inline-block; padding:6px 14px; margin:2px; "
+            f"border-radius:6px; font-size:0.74rem; font-weight:600; "
             f"background:{bg}; color:{fg}; border:1px solid {border}; "
-            f"letter-spacing:0.03em'>{label}</span>"
+            f"letter-spacing:0.03em; transition:all 0.15s ease'>{label}</span>"
         )
 
     completed_count = sum(1 for p in phases if completion.get(p, False))
     st.markdown(
-        f"<div style='display:flex; align-items:center; flex-wrap:wrap; gap:2px; margin-bottom:4px'>"
+        f"<div style='display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:8px; "
+        f"padding:10px 0'>"
         f"{''.join(pills)}"
-        f"<span style='margin-left:auto; font-size:0.72rem; color:{C.TEXT_MUTED}; "
-        f"font-weight:600'>{completed_count}/{len(phases)}</span></div>",
+        f"<span style='margin-left:auto; font-size:0.74rem; color:#434b51; "
+        f"font-weight:700; background:#f0f1f3; padding:3px 10px; border-radius:12px'>"
+        f"{completed_count}/{len(phases)}</span></div>",
         unsafe_allow_html=True,
     )

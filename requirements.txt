@@ -16,3 +16,4 @@ Pillow
 pytest
 httpx
 aiofiles
+libsass

@@ -1,0 +1,403 @@
+// TracePilot UI — dark industrial design system.
+// All visual primitives, color tokens, and reusable render helpers.
+// Used across all pages for visual consistency.
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COLOR TOKENS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Backgrounds
+$bg-base: #f7f7f7;          // deepest background
+$bg-surface: #ffffff;       // card / panel background
+$bg-raised: #081e45;        // raised elements, hover states
+$bg-overlay: #3b1e1e;       // modals, popovers
+
+// Borders
+$border: #440404;           // default subtle border
+$border-strong: #334155;    // emphasized border
+
+// Text
+$text: #47060e;             // primary text
+$text-dim: #ffffff;         // secondary / caption text
+$text-muted: #4e0505;       // disabled / hint text
+
+// Accent
+$accent: #510505;           // primary action blue
+$accent-hover: #38bdf8;     // hover state
+$accent-dim: rgba(221, 221, 221, 0.12);  // subtle bg tint
+
+// Section colors
+$section-header-bg: $bg-base;
+$section-sidebar-bg: #434b51;
+$section-sidebar-text: #ffffff;
+$section-sidebar-border: rgba(255,255,255,0.08);
+$section-metric-bg: $bg-surface;
+$section-metric-border: $border;
+$section-button-bg: $bg-raised;
+$section-button-hover-bg: $bg-overlay;
+$section-button-primary-bg: $accent;
+$section-button-primary-hover-bg: $accent-hover;
+$section-input-bg: $bg-base;
+$section-input-border: $border-strong;
+$section-expander-bg: $bg-surface;
+$section-progress-end: #16a34a;
+$section-radio-bg: $bg-surface;
+$section-radio-border: $border;
+$section-fileuploader-bg: $bg-surface;
+$section-divider-border: $border;
+
+// Status
+$success: #22c55e;
+$success-dim: rgba(34,197,94,0.10);
+$warning: #f59e0b;
+$warning-dim: rgba(245,158,11,0.10);
+$danger: #ef4444;
+$danger-dim: rgba(239,68,68,0.10);
+$info: #38bdf8;
+$info-dim: rgba(56,189,248,0.08);
+
+// Job statuses
+$status-created: #38bdf8;
+$status-uploading: #64748b;
+$status-extracting: #f59e0b;
+$status-review: #f97316;
+$status-inspecting: #a78bfa;
+$status-completed: #22c55e;
+$status-deviation: #ef4444;
+
+// Sensitivity
+$sensitivity-general: #64748b;
+$sensitivity-confidential: #f97316;
+$sensitivity-highly-confidential: #ef4444;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GLOBAL CSS — inject once from app.py
+// ═══════════════════════════════════════════════════════════════════════════
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Reset & canvas ─────────────────────────────────────────── */
+html, body, [class*="css"] {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+}
+
+.stApp {
+    background-color: $bg-base;
+}
+
+.block-container {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+    max-width: 1200px;
+}
+
+/* ── Navbar (top logo bar) ──────────────────────────────────────── */
+.stMainBlockContainer {
+    padding-top: 0 !important;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+header[data-testid="stHeader"] {
+    background: $section-header-bg !important;
+    border-bottom: 1px solid $section-sidebar-border;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #3a4147 0%, #434b51 40%, #4a5259 100%) !important;
+    border-right: none;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+}
+section[data-testid="stSidebar"] > div {
+    background: transparent !important;
+}
+section[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0.5rem;
+}
+section[data-testid="stSidebar"] .stMarkdown p,
+section[data-testid="stSidebar"] .stMarkdown h1,
+section[data-testid="stSidebar"] .stMarkdown h2,
+section[data-testid="stSidebar"] .stMarkdown h3,
+section[data-testid="stSidebar"] .stMarkdown span,
+section[data-testid="stSidebar"] .stMarkdown label {
+    color: $section-sidebar-text !important;
+}
+section[data-testid="stSidebar"] hr {
+    display: none !important;
+}
+
+/* Sidebar brand area */
+.sidebar-brand {
+    text-align: center;
+    padding: 18px 16px 14px;
+}
+.sidebar-brand img {
+    width: 120px;
+    margin-bottom: 4px;
+}
+.sidebar-brand-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+.sidebar-brand-tagline {
+    font-size: 0.65rem;
+    color: #ff5622;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+}
+
+/* Sidebar user block */
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    margin: 0 10px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 8px;
+}
+.sidebar-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #ff5622;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.sidebar-user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.2;
+}
+.sidebar-user-role {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1px 7px;
+    border-radius: 3px;
+    margin-top: 2px;
+}
+
+/* Sidebar nav section label */
+.sidebar-nav-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: #ff5622;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0 16px;
+    margin: 14px 0 6px;
+}
+
+/* Sidebar nav buttons */
+section[data-testid="stSidebar"] .stButton > button {
+    background: transparent !important;
+    color: #ff5622 !important;
+    border: none !important;
+    border-radius: 7px !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    transition: all 0.15s ease !important;
+    text-align: left !important;
+    padding: 10px 16px !important;
+    margin: 0 !important;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+    background: rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+}
+
+/* Sidebar Sign Out button */
+section[data-testid="stSidebar"] [data-testid="stButton"]:last-child > button {
+    background: rgba(255,86,34,0.10) !important;
+    color: #ff5622 !important;
+    border: 1px solid rgba(255,86,34,0.25) !important;
+    border-radius: 7px !important;
+    font-weight: 600 !important;
+    font-size: 0.80rem !important;
+    margin-top: 12px !important;
+    letter-spacing: 0.03em;
+}
+section[data-testid="stSidebar"] [data-testid="stButton"]:last-child > button:hover {
+    background: #ff5622 !important;
+    color: #ffffff !important;
+    border-color: #ff5622 !important;
+}
+
+/* ── Typography ─────────────────────────────────────────────── */
+h1 { font-weight: 700; letter-spacing: -0.03em; font-size: 1.6rem !important; color: $text !important; }
+h2 { font-weight: 700; letter-spacing: -0.02em; font-size: 1.25rem !important; color: $text !important; }
+h3 { font-weight: 600; letter-spacing: -0.01em; font-size: 1.05rem !important; color: $text !important; }
+
+/* ── Metric cards ───────────────────────────────────────────── */
+[data-testid="stMetric"] {
+    background: $section-metric-bg;
+    border: 1px solid $section-metric-border;
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+[data-testid="stMetricValue"] {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+[data-testid="stMetricLabel"] {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: $text-dim !important;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.stButton > button {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+    transition: all 0.12s ease;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #434b51;
+}
+.stButton > button:hover {
+    background: #ff5622;
+    border-color: #ff5622;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255,86,34,0.25);
+}
+.stButton > button[kind="primary"] {
+    background: #ff5622;
+    border: none;
+    color: #fff;
+}
+.stButton > button[kind="primary"]:hover {
+    background: #e64d1e;
+    box-shadow: 0 4px 12px rgba(255,86,34,0.3);
+}
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stTextArea > div > div > textarea,
+.stSelectbox > div > div {
+    background: $section-input-bg !important;
+    border-color: $section-input-border !important;
+    color: $text !important;
+    border-radius: 6px;
+}
+
+/* ── Expanders ──────────────────────────────────────────────── */
+details[data-testid="stExpander"] {
+    border: 1px solid #e8eaed;
+    border-radius: 8px;
+    background: #ffffff;
+}
+details[data-testid="stExpander"] summary {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #434b51;
+}
+
+/* ── Progress bar ───────────────────────────────────────────── */
+.stProgress > div > div > div {
+    background: linear-gradient(90deg, $success, $section-progress-end);
+    border-radius: 3px;
+}
+
+/* ── Horizontal radio (phase selector) ──────────────────────── */
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] {
+    gap: 2px;
+    background: #f5f5f6;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid #e8eaed;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] input[type="radio"] {
+    display: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    position: absolute !important;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label > div:first-child {
+    display: none !important;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label {
+    background: transparent !important;
+    color: #434b51 !important;
+    padding: 8px 16px !important;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label p {
+    color: #434b51 !important;
+    margin: 0 !important;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label:hover {
+    background: rgba(255,86,34,0.08) !important;
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label[data-checked="true"],
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] [aria-checked="true"] {
+    background: #ff5622 !important;
+    color: #ffffff !important;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(255,86,34,0.25);
+}
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] label[data-checked="true"] p,
+.stRadio[data-testid="stRadio"] > div[role="radiogroup"] [aria-checked="true"] p {
+    color: #ffffff !important;
+}
+
+/* ── Alerts ─────────────────────────────────────────────────── */
+.stAlert {
+    border-radius: 6px;
+    font-size: 0.88rem;
+}
+
+/* ── File uploader ──────────────────────────────────────────── */
+[data-testid="stFileUploader"] {
+    border-radius: 8px;
+}
+[data-testid="stFileUploader"] section {
+    border-color: $border-strong !important;
+    background: $section-fileuploader-bg;
+}
+
+/* ── Dividers ───────────────────────────────────────────────── */
+hr {
+    border-color: $section-divider-border !important;
+    margin: 0.75rem 0 !important;
+}
+
+/* ── Hide branding ──────────────────────────────────────────── */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+
+/* ── Forms ──────────────────────────────────────────────────── */
+[data-testid="stForm"] {
+    background: #ff5622 !important;
+    border: none !important;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+@import "dashboard.scss";

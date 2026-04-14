@@ -1,0 +1,264 @@
+// ═══════════════════════════════════════════════════════════════════════════
+// DASHBOARD VARIABLES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Page
+$dash-page-bg: #ffffff;
+$dash-page-padding: 28px;
+
+// Header
+$dash-header-title: #2d3239;
+$dash-header-subtitle: #6b7580;
+$dash-header-accent: #ff5622;
+
+// KPI cards
+$dash-kpi-bg: #ffffff;
+$dash-kpi-border: transparent;
+$dash-kpi-radius: 12px;
+$dash-kpi-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+$dash-kpi-value-color: #2d3239;
+$dash-kpi-label-color: #8a9199;
+$dash-kpi-total-accent: #ff5622;
+$dash-kpi-progress-accent: #3b82f6;
+$dash-kpi-completed-accent: #10b981;
+$dash-kpi-deviation-accent: #ef4444;
+
+// Table
+$dash-table-bg: #ffffff;
+$dash-table-radius: 12px;
+$dash-table-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+$dash-table-header-bg: #f8f9fb;
+$dash-table-header-text: #8a9199;
+$dash-table-header-border: #eef0f3;
+$dash-table-row-border: #f4f5f7;
+$dash-table-row-hover: #fef7f4;
+$dash-table-id-color: #adb3ba;
+$dash-table-title-color: #2d3239;
+$dash-table-divider: #eef0f3;
+
+// Open button
+$dash-btn-bg: #ff5622;
+$dash-btn-text: #ffffff;
+$dash-btn-hover-bg: #e64d1e;
+$dash-btn-radius: 8px;
+$dash-btn-shadow: none;
+
+// Footer
+$dash-footer-color: #adb3ba;
+
+// Section title
+$dash-section-title-color: #2d3239;
+$dash-section-count-color: #ff5622;
+$dash-section-border: #eef0f3;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DASHBOARD WRAPPER
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-wrapper {
+    background: $dash-page-bg;
+    min-height: 100vh;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// KPI CARDS
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 32px;
+}
+
+.dashboard-kpi-card {
+    background: $dash-kpi-bg;
+    border: 1px solid $dash-kpi-border;
+    border-radius: $dash-kpi-radius;
+    padding: 24px 24px 20px;
+    box-shadow: $dash-kpi-shadow;
+    display: flex;
+    flex-direction: column;
+    border-top: 3px solid #dfe2e6;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    }
+}
+
+.dashboard-kpi-card--total      { border-top-color: $dash-kpi-total-accent; }
+.dashboard-kpi-card--progress   { border-top-color: $dash-kpi-progress-accent; }
+.dashboard-kpi-card--completed  { border-top-color: $dash-kpi-completed-accent; }
+.dashboard-kpi-card--deviation  { border-top-color: $dash-kpi-deviation-accent; }
+
+.dashboard-kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $dash-kpi-value-color;
+    line-height: 1.1;
+}
+
+.dashboard-kpi-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $dash-kpi-label-color;
+    margin-top: 6px;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TABLE CARD
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-table-card {
+    background: $dash-table-bg;
+    border-radius: $dash-table-radius;
+    box-shadow: $dash-table-shadow;
+    border: none;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.dashboard-table-card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid $dash-table-divider;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dashboard-table-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $dash-section-title-color;
+}
+
+.dashboard-table-card-count {
+    font-size: 0.72rem;
+    color: #ff5622;
+    background: rgba(255,86,34,0.08);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.dashboard-table-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 24px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $dash-table-header-text;
+    font-weight: 700;
+    background: $dash-table-header-bg;
+    border-bottom: 1px solid $dash-table-header-border;
+}
+
+.dashboard-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 24px;
+    border-bottom: 1px solid $dash-table-row-border;
+    transition: background 0.12s ease;
+
+    &:hover {
+        background: $dash-table-row-hover;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.dashboard-row-id {
+    width: 56px;
+    color: $dash-table-id-color;
+    font-weight: 600;
+    font-size: 0.80rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-row-title {
+    flex: 1;
+    font-weight: 600;
+    color: $dash-table-title-color;
+    font-size: 0.88rem;
+}
+
+.dashboard-row-status,
+.dashboard-row-sensitivity {
+    text-align: center;
+    font-size: 0.88rem;
+}
+
+.dashboard-row-status {
+    width: 120px;
+}
+
+.dashboard-row-sensitivity {
+    width: 140px;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FOOTER
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-footer {
+    text-align: right;
+    padding: 14px 24px;
+    font-size: 0.72rem;
+    color: $dash-footer-color;
+    background: $dash-table-header-bg;
+    border-top: 1px solid $dash-table-row-border;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BUTTONS (open job)
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-row + div .stButton > button {
+    background: $dash-btn-bg !important;
+    color: $dash-btn-text !important;
+    border: none !important;
+    border-radius: $dash-btn-radius !important;
+    font-weight: 600 !important;
+    font-size: 0.80rem !important;
+    box-shadow: $dash-btn-shadow !important;
+    transition: all 0.15s ease !important;
+    padding: 0.35rem 1.2rem !important;
+
+    &:hover {
+        background: $dash-btn-hover-bg !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 10px rgba(255,86,34,0.25) !important;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EMPTY STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+.dashboard-empty {
+    text-align: center;
+    padding: 72px 20px;
+    background: $dash-table-bg;
+    border-radius: $dash-table-radius;
+    border: 1px solid #eef0f3;
+    box-shadow: $dash-table-shadow;
+}
+
+.dashboard-empty-title {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: $dash-section-title-color;
+    margin-bottom: 6px;
+}
+
+.dashboard-empty-subtitle {
+    font-size: 0.85rem;
+    color: $dash-footer-color;
+}

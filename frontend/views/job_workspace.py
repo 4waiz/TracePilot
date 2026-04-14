@@ -86,9 +86,9 @@ def render():
     with col_title:
         st.markdown(
             f"<div>"
-            f"<h1 style='margin:0; font-size:1.4rem !important'>"
+            f"<h1 style='margin:0; font-size:1.4rem !important; color:#434b51'>"
             f"{job.get('title', 'Untitled Job')}</h1>"
-            f"<span style='color:{C.TEXT_MUTED}; font-size:0.82rem'>Job #{job_id}</span>"
+            f"<span style='color:#8a9199; font-size:0.82rem'>Job #{job_id}</span>"
             f"  {chip(status, status_color)}"
             f"</div>",
             unsafe_allow_html=True,

@@ -14,7 +14,7 @@ import streamlit as st
 # -- Page config (must be first Streamlit call) ---------------------------
 st.set_page_config(
     page_title="TracePilot",
-    page_icon="icon.png",
+    page_icon="logo2.png",
     layout="wide",
 )
 
@@ -50,26 +50,39 @@ else:
     user_role = user_obj.get("role", "user")
     username = user_obj.get("username", "")
 
+    # ── Top navbar with logo ─────────────────────────────────────────
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image("logo2.png", width=250, use_container_width=False)
+
     # ── Sidebar ──────────────────────────────────────────────────────
     with st.sidebar:
+        # Logo (centered)
+        col_l, col_c, col_r = st.columns([1, 3, 1])
+        with col_c:
+            st.image("icon2.png", use_container_width=True)
+
         # Brand block
         st.markdown(
-            f"<div style='text-align:center; padding:8px 0 4px'>"
-            f"<div style='font-size:1.3rem; font-weight:700; color:{C.TEXT}; "
-            f"letter-spacing:-0.03em'>TracePilot</div>"
-            f"<div style='font-size:0.7rem; color:{C.TEXT_MUTED}; "
-            f"text-transform:uppercase; letter-spacing:0.1em; margin-top:2px'>"
-            f"Inspection & Traceability</div></div>",
+            "<div class='sidebar-brand'>"
+            "<div class='sidebar-brand-name'>TracePilot</div>"
+            "<div class='sidebar-brand-tagline'>Inspection &amp; Traceability</div>"
+            "</div>",
             unsafe_allow_html=True,
         )
         st.markdown("---")
 
         # User block
-        role_color = C.ACCENT if user_role == "admin" else C.SUCCESS if user_role == "supervisor" else C.TEXT_DIM
+        initial = username[0].upper() if username else "U"
+        role_colors = {"admin": "#ff5622", "supervisor": "#22c55e", "operator": "#38bdf8"}
+        rc = role_colors.get(user_role, "#64748b")
         st.markdown(
-            f"<div style='padding:6px 0'>"
-            f"<div style='font-size:0.88rem; font-weight:600; color:{C.TEXT}'>{username}</div>"
-            f"<div style='margin-top:3px'>{chip(user_role, role_color)}</div></div>",
+            f"<div class='sidebar-user'>"
+            f"<div class='sidebar-avatar'>{initial}</div>"
+            f"<div>"
+            f"<div class='sidebar-user-name'>{username}</div>"
+            f"<span class='sidebar-user-role' style='background:{rc}; color:#fff'>{user_role}</span>"
+            f"</div></div>",
             unsafe_allow_html=True,
         )
         st.markdown("---")
@@ -81,28 +94,29 @@ else:
         if user_role == "admin":
             nav_items.append("Audit Log")
 
-        nav_icons = {
-            "Dashboard": "◻",
-            "Job Workspace": "▸",
-            "New Job": "+",
-            "Deviation Review": "△",
-            "Audit Log": "☰",
-        }
-
-        nav_labels = [f"{nav_icons.get(i, '·')}  {i}" for i in nav_items]
         current_nav = st.session_state.get("nav", "Dashboard")
-        default_index = nav_items.index(current_nav) if current_nav in nav_items else 0
 
-        nav_label = st.radio(
-            "Navigation", nav_labels,
-            index=default_index, label_visibility="collapsed",
-        )
-        nav = nav_items[nav_labels.index(nav_label)]
+        st.markdown("<div style='margin-top:12px'></div>", unsafe_allow_html=True)
+        for item in nav_items:
+            is_active = (item == current_nav)
+            if is_active:
+                st.markdown(
+                    f"<div style='padding:10px 16px; margin:2px 8px; border-radius:0 7px 7px 0; "
+                    f"border-left:3px solid #ff5622; background:rgba(255,86,34,0.15); "
+                    f"color:#ffffff; font-size:0.85rem; font-weight:600; cursor:pointer'>"
+                    f"{item}</div>",
+                    unsafe_allow_html=True,
+                )
+            if st.button(item, key=f"nav_{item}", use_container_width=True):
+                st.session_state["nav"] = item
+                st.rerun()
 
-        st.markdown("---")
+        nav = current_nav
+
+        st.markdown("<div style='margin-top:16px'></div>", unsafe_allow_html=True)
 
         # Logout
-        if st.button("Logout", use_container_width=True):
+        if st.button("⏻  Sign Out", key="sidebar_logout", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
