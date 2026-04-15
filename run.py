@@ -11,6 +11,7 @@ import sys
 import time
 import signal
 import os
+import webbrowser
 
 BACKEND_CMD = [sys.executable, "-m", "uvicorn", "backend.main:app", "--reload", "--port", "8000"]
 FRONTEND_CMD = [sys.executable, "-m", "streamlit", "run", "frontend/app.py", "--server.port", "8501", "--server.headless", "true"]
@@ -50,11 +51,15 @@ if __name__ == "__main__":
     procs.append(subprocess.Popen(FRONTEND_CMD))
 
     print("\n" + "-" * 50)
+    print("  Landing  -> http://localhost:8000")
     print("  Backend  -> http://localhost:8000")
     print("  Frontend -> http://localhost:8501")
     print("  API docs -> http://localhost:8000/docs")
     print("-" * 50)
     print("Press Ctrl+C to stop all services.\n")
+
+    # Auto-open the landing page in the default browser
+    webbrowser.open("http://localhost:8000")
 
     # Wait for either process to exit
     try:

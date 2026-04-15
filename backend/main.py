@@ -5,13 +5,17 @@ Configures middleware, startup tasks, and route includes.
 
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.config import settings
 from backend.seed import run_seed
+
+LANDING_DIR = Path(__file__).resolve().parent.parent / "Landing Page"
 
 
 # ── Lifespan (startup / shutdown) ────────────────────────────────────────────
@@ -103,3 +107,15 @@ app.include_router(audit_routes.router)
 async def health_check():
     """Simple health probe for load balancers and monitoring."""
     return {"status": "ok", "service": "TracePilot API"}
+
+
+# ── Landing page ─────────────────────────────────────────────────────────────
+
+# Serve static assets (CSS, images, videos) from the Landing Page folder
+app.mount("/landing", StaticFiles(directory=str(LANDING_DIR)), name="landing")
+
+
+@app.get("/", include_in_schema=False)
+async def landing_page():
+    """Serve the landing page HTML at the root URL."""
+    return FileResponse(str(LANDING_DIR / "index.htm"))

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TracePilot | Hackathon Prototype</title>
+    <link rel="stylesheet" href="/landing/index.css">
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <img src="/landing/logo2.png" width="300px" alt="TracePilot Logo">
+            </a>
+            <div>
+                <a href="#tech" class="btn btn-outline">View Architecture</a>
+                <a href="http://localhost:8501" class="btn btn-primary">Launch Prototype</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>AI-Powered Inspection for the EDGE Workforce</h1>
+            <p>TracePilot leverages computer vision and NLP to instantly digitize complex engineering drawings, guide workers step-by-step, and auto-generate compliance records.</p>
+            <div class="hero-btns">
+                <a href="http://localhost:8501" class="btn btn-primary">Start Live Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="problem" class="challenges">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Bottleneck We Are Solving</h2>
+                <p>Manufacturing is fast, but quality control is stuck in the past. We are eliminating these manual failure points:</p>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Unstructured Data</h3>
+                    <p>Workers waste hours manually cross-referencing paper job cards, SOPs, and complex CAD drawings to find what to measure.</p>
+                </div>
+                <div class="card">
+                    <h3>Delayed Error Detection</h3>
+                    <p>Manual data entry means mistakes are caught *after* the batch is made, leading to expensive rework and material waste.</p>
+                </div>
+                <div class="card">
+                    <h3>The Knowledge Gap</h3>
+                    <p>Crucial inspection intuition lives in the heads of senior staff, making new-hire onboarding slow and prone to errors.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tech" class="solution">
+        <div class="container">
+            <div class="section-header">
+                <h2>Under the Hood: What the AI Actually Does</h2>
+                <p>How our models transform unstructured manufacturing documents into active workflows.</p>
+            </div>
+
+            <div class="grid">
+                <div class="solution-card">
+                    <h3>1. Vision AI: Drawing Parsing</h3>
+                    <p><strong>The Tech:</strong> Our computer vision model ingests 2D engineering drawings and automatically extracts critical dimensions, tolerances, and part features.</p>
+                    <p><strong>The Fix:</strong> No more squinting at blueprints. The system instantly knows exactly what needs to be measured.</p>
+                </div>
+                <div class="solution-card">
+                    <h3>2. NLP: Smart SOP Digitization</h3>
+                    <p><strong>The Tech:</strong> Natural Language Processing reads static Job Cards and SOPs, breaking them down into a step-by-step, logic-driven digital checklist.</p>
+                    <p><strong>The Fix:</strong> Standardizes the inspection process so any new EDGE worker can perform like a 10-year veteran.</p>
+                </div>
+                <div class="solution-card">
+                    <h3>3. Real-Time Anomaly Detection</h3>
+                    <p><strong>The Tech:</strong> As workers input measurements, the system instantly validates the data against the extracted tolerances from the Vision model.</p>
+                    <p><strong>The Fix:</strong> Flags out-of-spec parts instantly on the floor, stopping defective production runs dead in their tracks.</p>
+                </div>
+                <div class="solution-card">
+                    <h3>4. Generative Reporting</h3>
+                    <p><strong>The Tech:</strong> Synthesizes the parsed requirements and the worker's input data to auto-populate compliance documents.</p>
+                    <p><strong>The Fix:</strong> Eliminates manual admin work. Traceability records are generated perfectly and instantly for every single part.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="how-to-use">
+        <div class="container">
+            <div class="section-header">
+                <h2>How to Use TracePilot</h2>
+                <p>Watch the walkthrough below to see the full inspection workflow in action — from uploading a drawing to generating a compliance report.</p>
+            </div>
+
+            <div class="video-wrapper">
+                <video controls poster="" preload="metadata">
+                    <source src="/landing/demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="grid steps-grid">
+                <div class="step-card">
+                    <span class="step-number">1</span>
+                    <h3>Upload Documents</h3>
+                    <p>Drag and drop your engineering drawings, job cards, or SOPs into TracePilot.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">2</span>
+                    <h3>AI Extraction</h3>
+                    <p>Our Vision and NLP models automatically extract dimensions, tolerances, and inspection steps.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">3</span>
+                    <h3>Guided Inspection</h3>
+                    <p>Follow the step-by-step digital checklist. Measurements are validated in real time.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">4</span>
+                    <h3>Auto-Generate Reports</h3>
+                    <p>One click produces full compliance and traceability records — ready for audit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Team Behind TracePilot</h2>
+                <p>Meet the engineers and builders bringing this prototype to life.</p>
+            </div>
+            
+            <div class="grid">
+                <div class="team-card">
+                    <div class="team-avatar"><img src="./team members/Screenshot 2026-04-14 202611.png" alt=""></div>
+                    <h3>AWAIZ Ahmed</h3>
+                   </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"></div>
+                    <h3>Omar abdelfattah</h3>
+                    </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"></div>
+                    <h3>Muhammad Umar</h3>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"></div>
+                    <h3>bilal feroz</h3>
+                     </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"></div>
+                    <h3>Farooq Shafeek</h3>
+                    </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"></div>
+                    <h3>Fuad Ahamed</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 TracePilot - Built for the Hackathon.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

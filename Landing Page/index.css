@@ -1,0 +1,328 @@
+/* CSS Variables — EDGE Group palette (orange & gray) */
+:root {
+    --accent: #C65D3D;
+    --accent-hover: #B34F31;
+    --primary-dark: #2D2926;
+    --bg-base: #F5F4F2;
+    --bg-surface: #FFFFFF;
+    --bg-raised: #EDECEB;
+    --bg-section: #ECEAE7;
+    --text-primary: #1A1A1A;
+    --text-muted: #4A4A4A;
+    --text-light: #8A8A8A;
+    --border: #E5E3E0;
+    --white: #ffffff;
+    --border-radius: 8px;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-base);
+}
+
+/* Components */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(198, 93, 61, 0.3);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary-dark);
+    border: 2px solid var(--primary-dark);
+    margin-right: 10px;
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+/* Header */
+header {
+    background: var(--bg-surface);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-bottom: 2px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+}
+
+.logo img {
+    height: 100px;
+    width: auto;
+}
+
+/* Hero Section */
+.hero {
+    padding: 100px 0 80px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--bg-section) 0%, var(--bg-base) 100%);
+    border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+    font-size: 3.2rem;
+    margin-bottom: 20px;
+    color: var(--primary-dark);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 750px;
+    margin: 0 auto 40px auto;
+}
+
+/* Grids */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* Problem Section */
+.challenges {
+    padding: 80px 0;
+    background-color: var(--bg-surface);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 2.4rem;
+    color: var(--accent);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.challenges .card {
+    background: var(--bg-base);
+    padding: 35px;
+    border-radius: var(--border-radius);
+    border-top: 4px solid var(--accent);
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.card p {
+    color: var(--text-muted);
+}
+
+/* The Tech Section (Hackathon Focus) */
+.solution {
+    padding: 90px 0;
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+.solution .section-header h2 {
+    color: var(--white);
+}
+
+.solution .section-header p {
+    color: var(--bg-raised);
+    font-size: 1.1rem;
+}
+
+.solution-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 35px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--accent);
+    transition: transform 0.3s ease;
+}
+
+.solution-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.solution-card h3 {
+    color: var(--white);
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.solution-card p {
+    color: #cbd5e0;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.solution-card strong {
+    color: #F0A87D;
+}
+
+/* How to Use Section */
+.how-to-use {
+    padding: 90px 0;
+    background-color: var(--bg-section);
+}
+
+.video-wrapper {
+    max-width: 900px;
+    margin: 0 auto 60px auto;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    background: #000;
+}
+
+.video-wrapper video {
+    width: 100%;
+    display: block;
+}
+
+.steps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.step-card {
+    background: var(--bg-surface);
+    padding: 35px 25px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: var(--white);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.step-card h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: var(--primary-dark);
+}
+
+.step-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Team Section */
+.team {
+    padding: 90px 0;
+    background-color: var(--bg-base);
+}
+
+.team-card {
+    background: var(--bg-surface);
+    padding: 40px 30px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+}
+
+.team-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--bg-raised);
+    margin: 0 auto 20px auto;
+    border: 3px solid var(--accent);
+}
+
+.team-card h3 {
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    font-size: 1.3rem;
+}
+
+.team-card .role {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.team-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Footer */
+footer {
+    background-color: var(--bg-surface);
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-light);
+    font-weight: 500;
+    border-top: 1px solid var(--border);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .nav-container { flex-direction: column; height: auto; padding: 20px 0; gap: 15px;}
+}
