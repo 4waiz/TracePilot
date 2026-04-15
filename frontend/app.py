@@ -14,7 +14,7 @@ import streamlit as st
 # -- Page config (must be first Streamlit call) ---------------------------
 st.set_page_config(
     page_title="TracePilot",
-    page_icon="icon2.png",
+    page_icon="iconn.png",
     layout="wide",
 )
 
@@ -55,7 +55,7 @@ else:
         # Logo
         col_l, col_c, col_r = st.columns([1, 5, 1])
         with col_c:
-            st.image("icon2.png", use_container_width=True)
+            st.image("iconn.png", use_container_width=True)
 
         # Brand block
         st.markdown(

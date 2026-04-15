@@ -124,7 +124,7 @@ def render():
         # Logo
         logo_l, logo_c, logo_r = st.columns([1, 1, 1])
         with logo_c:
-            st.image("logo.png", width=260)
+            st.image("iconn.png", width=260)
 
         st.markdown(
             "<div class='edge-login-header'>"
